@@ -81,17 +81,24 @@
             font-size: 14px;
             text-align: center;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            position: relative;
         }
         .footer img {
             height: 40px;
+            position: absolute;
+            left: 10px;
+        }
+        .footer-text {
+            text-align: center;
+            flex-grow: 1;
         }
     </style>
 </head>
 <body>
     <div class="splash-screen" id="splash">
-        <img src="MGS/logo.png" alt="RetroSpectare Logo">
+        <img src="imagenes/logo.png" alt="RetroSpectare Logo">
     </div>
     <div class="banner">RetroSpectare</div>
     <div class="container">
@@ -107,8 +114,8 @@
         </div>
     </div>
     <div class="footer">
-        <img src="MGS/MC.png" alt="Museo Canario Logo">
-        <span>© 2024 RetroSpectare. Todos los derechos reservados.</span>
+        <img src="imagenes/MC.png" alt="Museo Canario Logo">
+        <div class="footer-text">© 2024 RetroSpectare. Todos los derechos reservados.</div>
     </div>
     <script>
         const splash = document.getElementById('splash');
