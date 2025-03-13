@@ -76,15 +76,35 @@
             margin-top: 15px;
             margin-bottom: 40px;
         }
-        video, img { 
-            width: 100%; 
-            height: auto; 
-            object-fit: cover; 
-        }
-        img { 
-            opacity: 0.5; 
-            pointer-events: none; 
-        }
+		
+		video {
+			width: 95%;  /* Ajusta el ancho dejando un pequeño margen */
+			height: 95%; /* Ajusta la altura con margen */
+			object-fit: cover; /* Asegura que el video cubra el área correctamente */
+			border-radius: 10px; /* Bordes redondeados opcionales */
+			border: 5px solid white; /* Borde blanco opcional */
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 1;
+		}
+
+		#overlay {
+			width: 90%;
+			max-width: 100%;  /* Mantiene la imagen ocupando todo el ancho */
+			height: 90%;
+			max-height: 100%;  /* Permite que mantenga su proporción */
+			object-fit: contain; /* Evita cortes en la imagen */
+			opacity: 0.5; /* Mantiene la opacidad controlada */
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 2;
+			pointer-events: none;
+		}
+	
         .controls { 
             display: flex;
             flex-direction: column;
@@ -92,21 +112,72 @@
             gap: 10px;
             margin-top: 10px;
         }
-        .map-toggle {
-            position: absolute;
-            top: 20px;
-            right: -70px;
-            background: white;
-            border: 2px solid #2196F3;
-            border-radius: 10px;
-            padding: 10px;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 24px;
-            color: #2196F3;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-            display: none;
-        }
+		
+		.map-toggle {
+			position: absolute;
+			right: -70px; /* Mueve los botones fuera del borde derecho */
+			width: 45px;
+			height: 50px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 10px;
+			cursor: pointer;
+			font-size: 24px;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}		
+				
+		/* Cambia el color al pasar el cursor */
+		.map-toggle:hover {
+			background: #2196F3;
+			color: white;
+			border-color: white;
+		}
+		
+		/* Posicionamiento individual para los botones */
+		#mapButton {
+			top: 20px; /* Ubica el primer botón */
+			position: absolute;
+			right: -70px; /* Mantiene la posición fuera del borde derecho */
+			width: 45px;
+			height: 50px; /* Mantener el botón alargado */
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 10px;
+			cursor: pointer;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+			
+			/* Corrección de alineación específica para este botón */
+			display: flex;
+			justify-content: center; /* Centra el ícono verticalmente */
+			align-items: center; /* Centra el ícono horizontalmente */
+			flex-direction: row; /* Mantiene una estructura horizontal */
+		}
+		
+		#mapButton:hover {
+			background: #2196F3 !important;
+			color: white !important;
+			border-color: white !important;
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}
+
+		#mapButton i {
+			font-size: 24px; /* Ajusta el tamaño del icono */
+			line-height: 1; /* Evita que el icono se desplace verticalmente */
+			height: auto; /* Se adapta dinámicamente */
+		}
+
+
+		#openMuseumMap {
+			top: 80px; /* Ubica el segundo botón debajo del primero */
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}				
         .footer {
             background-color: #333;
             color: white;
@@ -143,6 +214,171 @@
             width: 100%;
             height: 100%;
         }
+		.close-map-button {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: red;
+			color: white;
+			border: none;
+			font-size: 24px;
+			font-weight: bold;
+			padding: 5px 10px;
+			cursor: pointer;
+			border-radius: 5px;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			z-index: 1001; /* Asegura que está sobre otros elementos */
+		}
+		.close-map-button:hover {
+			background: darkred;
+		}
+		
+		#museumMapContainer {
+			position: fixed;
+			top: 0;
+			left: -350px; /* Inicialmente oculto fuera de la pantalla */
+			width: 350px; /* Tamaño del panel lateral */
+			height: 100vh; /* Ocupa toda la altura */
+			background: white;
+			box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3); /* Sombra a la derecha */
+			transition: left 0.3s ease-in-out; /* Animación suave */
+			z-index: 999;
+			display: block; /* Cambiar de 'none' a 'block' */
+		}
+
+		/* Cuando el mapa del museo esté visible */
+		#museumMapContainer.active {
+			left: 0; /* Mueve el panel a la vista */
+		}
+		
+		#museumMap {
+			width: 100%;
+			height: 100%;
+			min-height: 300px; /* Asegura que tenga una altura mínima */
+		}
+		
+		#closeMuseumMap {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: red;
+			color: white;
+			border: none;
+			font-size: 24px;
+			font-weight: bold;
+			padding: 5px 10px;
+			cursor: pointer;
+			border-radius: 5px;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			z-index: 1001;
+		}
+
+		#closeMuseumMap:hover {
+			background: darkred;
+		}
+		
+		.popup {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			justify-content: center;
+			align-items: center;
+			z-index: 1000;
+		}
+
+		.popup-content {
+			background: white;
+			padding: 20px;
+			border-radius: 10px;
+			text-align: center;
+			width: 300px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+			position: relative;
+		}
+
+		.popup-content img {
+			max-width: 100%;
+			border-radius: 8px;
+		}
+
+		.close-popup {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: red;
+			color: white;
+			border: none;
+			font-size: 18px;
+			padding: 5px;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+		
+		.info-button {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: transparent;
+			color: white;
+			border: none;
+			border-radius: 50%;
+			padding: 5px 10px;
+			cursor: pointer;
+			font-size: 24px;
+			z-index: 3;
+		}
+		
+		#openInfoButton {
+			top: 140px; /* Ubicarlo debajo del botón del mapa del museo */
+			position: absolute;
+			right: -70px; /* Mantiene la posición fuera del borde derecho */
+			width: 45px;
+			height: 50px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 10px;
+			cursor: pointer;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}
+
+		#openInfoButton:hover {
+			background: #2196F3;
+			color: white;
+			border-color: white;
+		}
+		
+		.settings-toggle {
+			position: absolute;
+			left: -70px; /* Mueve el botón fuera del contenedor */
+			top: 90%;
+			transform: translateY(-50%);
+			width: 50px;
+			height: 50px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 50%;
+			cursor: pointer;
+			font-size: 24px;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}
+
+		.settings-toggle:hover {
+			background: #2196F3;
+			color: white;
+			border-color: white;
+		}
+		
     </style>
 </head>
 <body>
@@ -154,10 +390,34 @@
         <div class="container">
             <video id="camera" autoplay></video>
             <img id="overlay" src="" alt="Imagen superpuesta">
+			
+			<!-- Botón del mapa exterior -->
             <button class="map-toggle" id="mapButton" onclick="toggleMap()">
                 <i class="fas fa-map-marker-alt"></i>
             </button>
+			
+			<!-- Botón del mapa del museo -->
+			<button class="map-toggle" id="openMuseumMap">
+				<i class="fas fa-map"></i>
+			</button>
+			
+			<!-- Botón para abrir la ficha de información -->
+			<button class="map-toggle" id="openInfoButton">
+				<i class="fas fa-info-circle"></i>
+			</button>
+			
+			<!-- Botón de configuración -->
+			<button id="settingsButton" class="settings-toggle">
+				<i class="fas fa-cog"></i>
+			</button>
+			
+			<!-- Contenedor del mapa del museo -->
+			<div id="museumMapContainer" class="map-container">
+				<button id="closeMuseumMap" class="close-map-button">&times;</button>
+				<div id="museumMap"></div>
+			</div>
         </div>
+		
         <div class="controls-container">
             <div class="controls">
                 <label for="imageSelect">📷 Selecciona una imagen:</label>
@@ -169,25 +429,65 @@
             </div>
         </div>
     </div>
-    <div class="map-container" id="mapContainer">
-        <div id="map"></div>
-    </div>
+	
+	<div id="imagePopup" class="popup">
+		<div class="popup-content">
+			<button class="close-popup" onclick="closePopup()">❌</button>
+			<h2 id="popupTitle">Información de la Imagen</h2>
+			<img id="popupImage" src="" alt="Imagen relacionada">
+			<p id="popupDescription">Aquí aparecerá la descripción de la imagen.</p>
+		</div>
+	</div>
+
+	<div class="map-container" id="mapContainer">
+		<button id="closeMap" class="close-map-button" style="position:absolute; top:10px; right:10px;">&times;</button>
+		<div id="map"></div>
+	</div>
     <div class="footer">
         <img src="MGS/MC.png" alt="Museo Canario Logo">
         <div class="footer-text">© 2024 RetroSpectare. Todos los derechos reservados.</div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        const splash = document.getElementById('splash');
-        const mapButton = document.getElementById('mapButton');
-        mapButton.style.display = 'none';
-        setTimeout(() => {
-            splash.style.opacity = '0';
-            setTimeout(() => {
-                splash.style.display = 'none';
-                mapButton.style.display = 'block';
-            }, 1000);
-        }, 3000);
+	
+		window.addEventListener("load", function() {
+			// **Pantalla de inicio y botón de mapa**
+			const splash = document.getElementById('splash');
+			const mapButton = document.getElementById('mapButton');
+			    
+				if (!splash) {
+					console.error("Error: No se encontró el elemento #splash.");
+					return;
+				}
+
+				if (!mapButton) {
+					console.error("Error: No se encontró el elemento #mapButton.");
+					return;
+				}
+				
+			mapButton.style.display = 'none';
+			setTimeout(() => {
+				splash.style.opacity = '0';
+				setTimeout(() => {
+					splash.style.display = 'none';
+					mapButton.style.display = 'block';
+				}, 1000);
+			}, 3000);
+		});
+		
+		window.addEventListener("load", function() {
+			// **Acceso a la cámara**
+			navigator.mediaDevices.getUserMedia({ video: true })
+				.then(stream => {
+					document.getElementById('camera').srcObject = stream;
+				})
+				.catch(err => console.error("Error al acceder a la cámara:", err));
+		});
+
+		window.addEventListener("load", function() {
+			// **Evento para cerrar el mapa**
+			document.getElementById("closeMap").addEventListener("click", toggleMap);
+		});
 		
 		const imageSelect = document.getElementById("imageSelect");
         const overlay = document.getElementById("overlay");
@@ -198,17 +498,21 @@
 			"MGS/C04.jpg", "MGS/C05.jpg", "MGS/C06.jpg",
 			"MGS/C07.jpg", "MGS/C08.jpg", "MGS/C09.jpg",
 			"MGS/C10.jpg", "MGS/C11.jpg", "MGS/C12.jpg",
-			"MGS/C13.jpg", "MGS/C14.jpg", "MGS/C15.jpg"
+			"MGS/C13.jpg", "MGS/C14.jpg", "MGS/C15.jpg",
+			"MGS/M01.jpg", "MGS/M02.jpg", "MGS/M03.jpg",
+			"MGS/M04.jpg", "MGS/M05.jpg", "MGS/M06.jpg",
+			"MGS/M07.jpg", "MGS/M08.jpg", "MGS/M09.jpg",
+			"MGS/M10.jpg"
         ];
-        images.forEach(src => {
-            let option = document.createElement("option");
-            option.value = src;
-            option.textContent = src.split("/").pop();
-            imageSelect.appendChild(option);
-        });
-        imageSelect.addEventListener("change", event => {
-            overlay.src = event.target.value;
-        });
+		
+		imageSelect.innerHTML = `<option value="" selected disabled>Selecciona una imagen</option>` + 
+			images.map(src => `<option value="${src}">${src.split("/").pop()}</option>`).join('');
+
+		imageSelect.addEventListener("change", event => {
+			if (event.target.value) { // Solo cambia la imagen si hay una selección válida
+        overlay.src = event.target.value;
+			}
+		});
 		
 		opacityControl.addEventListener("input", event => {
         overlay.style.opacity = event.target.value;
@@ -223,6 +527,386 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
+		
+		const imageLocations = {
+			"MGS/C01.jpg": { lat: 28.108809, lng: -15.417086 },
+			"MGS/C02.jpg": { lat: 28.108264, lng: -15.417456 },
+			"MGS/C03.jpg": { lat: 28.105750, lng: -15.416119 },
+			"MGS/C04.jpg": { lat: 28.104806, lng: -15.415780 }, 
+			"MGS/C05.jpg": { lat: 28.104083130613827, lng: -15.416124543195322 },
+			"MGS/C06.jpg": { lat: 28.102494737211124, lng: -15.416195783873665 },
+			"MGS/C07.jpg": { lat: 28.1021455696441, lng: -15.4157773960626 },
+			"MGS/C08.jpg": { lat: 28.101777568276407, lng: -15.415517835223058 },
+			"MGS/C09.jpg": { lat: 28.100695792727716, lng: -15.415112765211047 },
+			"MGS/C10.jpg": { lat: 28.10035367542168, lng: -15.415976713670425 },
+			"MGS/C11.jpg": { lat: 28.09986242583599, lng: -15.416717015257847 },
+			"MGS/C12.jpg": { lat: 28.10036399095969, lng: -15.415001888800532 },
+			"MGS/C13.jpg": { lat: 28.101312220228376, lng: -15.414699608455459 },
+			"MGS/C14.jpg": { lat: 28.103155016825813, lng: -15.413515359336174 },
+			"MGS/C15.jpg": { lat: 28.103059353051304, lng: -15.413733853928663 },
+			"MGS/M01.jpg": { lat: 28.09994446913674, lng: -15.415180608216648 },
+		};
+		
+		Object.keys(imageLocations).forEach(image => {
+			const { lat, lng } = imageLocations[image];
+			const marker = L.marker([lat, lng]).addTo(map)
+				.bindPopup(`<img src="${image}" width="100px"><br>${image.split("/").pop()}`)
+				.on("click", () => {
+					imageSelect.value = image;  // Selecciona la imagen en el dropdown
+					overlay.src = image;        // Cambia la imagen superpuesta
+				});
+		});
+		
+		imageSelect.addEventListener("change", event => {
+			const selectedImage = event.target.value;
+			overlay.src = selectedImage;
+    
+		if (imageLocations[selectedImage]) {
+			const { lat, lng } = imageLocations[selectedImage];
+			map.setView([lat, lng], 15); // Acerca el mapa a la imagen seleccionada
+		}
+		});
+		
+		const clickSound = new Audio("MGS/VL.mp3");
+		Object.keys(imageLocations).forEach(image => {
+			const { lat, lng } = imageLocations[image];
+			const marker = L.marker([lat, lng]).addTo(map)
+				.bindPopup(`<img src="${image}" width="100px"><br>${image.split("/").pop()}`)
+				.on("click", () => {
+					imageSelect.value = image;  // Seleccionar imagen en dropdown
+					overlay.src = image;        // Cambiar la imagen superpuesta
+					clickSound.play();          // Reproducir sonido
+				});
+		});
+		
+		clickSound.currentTime = 0;
+		clickSound.play();
+		
+		document.addEventListener("DOMContentLoaded", function() {
+			const museumMapContainer = document.getElementById("museumMapContainer");
+			const openMuseumMapButton = document.getElementById("openMuseumMap");
+			const closeMuseumMapButton = document.getElementById("closeMuseumMap");
+
+			// Evento para abrir el mapa del museo
+			openMuseumMapButton.addEventListener("click", function() {
+				museumMapContainer.classList.toggle("active"); // Muestra el mapa del museo
+					setTimeout(() => {
+						museumMap.invalidateSize(); // Ajusta el mapa de Leaflet después de la animación
+					}, 300); // Esperar 300ms para que la animación del panel termine
+				});
+
+			// Evento para cerrar el mapa del museo
+			closeMuseumMapButton.addEventListener("click", function() {
+				museumMapContainer.classList.remove("active"); // Oculta el mapa del museo
+			});
+		});
+
+		const museumMap = L.map('museumMap', {
+			crs: L.CRS.Simple,
+			minZoom: -2,
+			maxZoom: 2
+		});
+
+		const bounds = [[0, 0], [1000, 1000]]; // Ajustar según imagen
+		const museumImage = L.imageOverlay('MGS/Plan01.jpg', [[0, 0], [1000, 1000]]).addTo(museumMap);
+		
+		museumMap.on('click', function (e) {
+			alert(`Coordenadas: ${e.latlng.lat}, ${e.latlng.lng}`);
+		});
+
+		museumMap.fitBounds(bounds);
+
+		// Marcadores del museo
+		const museumMarkers = [
+			{ coords: [411.75, 630], title: "Poblados", img: "MGS/M02.jpg" },
+			{ coords: [869, 587.25], title: "Industria Lítica", img: "MGS/M03.jpg" },
+			{ coords: [784.5, 466.5], title: "Producción de alimentos", img: "MGS/M04.jpg" },
+			{ coords: [472.25, 634.25], title: "Producción simbólica", img: "MGS/M05.jpg" },
+			{ coords: [780.5, 706.75], title: "Bioantropología", img: "MGS/M06.jpg" },
+			{ coords: [495.5, 571], title: "Espacios Funerarios", img: "MGS/M10.jpg" },
+			{ coords: [831.75, 707.5], title: "Espacios Funerarios", img: "MGS/M11.jpg" },
+			{ coords: [768.5, 631.5], title: "Espacios Funerarios", img: "MGS/M12.jpg" },
+			{ coords: [702, 378], title: "Espacios Funerarios", img: "MGS/M14.jpg" }
+		];
+		
+		museumMarkers.forEach(({ coords, title, img }) => {
+			L.marker(coords).addTo(museumMap)
+			.bindPopup(`<b>${title}</b><br><img src='${img}' width='150'>`)
+			.on("click", function() {
+				let overlay = document.getElementById("overlay");
+				if (overlay) {
+					overlay.src = img; // Cambia la imagen en la pantalla de cámara
+				} else {
+					console.error("Elemento #overlay no encontrado.");
+				}
+		// Reproducir sonido al hacer clic en el marcador
+			clickSound.currentTime = 0; // Reinicia el sonido si ya estaba reproduciéndose
+			clickSound.play().catch(error => console.error("Error al reproducir el sonido:", error));
+			});
+		});
+		
+		function openPopup(title, imgSrc, description) {
+			document.getElementById("popupTitle").textContent = title;
+			document.getElementById("popupImage").src = imgSrc;
+			document.getElementById("popupDescription").textContent = description;
+			document.getElementById("imagePopup").style.display = "flex";
+		}
+
+		function closePopup() {
+			document.getElementById("imagePopup").style.display = "none";
+		}
+
+		// Asociar información a cada imagen
+		const imageInfo = {
+			"MGS/C01.jpg": { 
+			title: "Las Palmas. Parque Cervantes.", 
+			description: "Vista parcial del parque de San Telmo, entonces denominado parque de Cervantes. Aparece uno de sus quioscos, concretamente el situado en el lado noroeste, de estilo modernista y proyectadoen 1923 por Rafael Masanet y Faus." 
+			},
+			"MGS/C02.jpg": { 
+			title: "Las Palmas. Calle de León y Castillo.", 
+			description: "Tarjeta postal mostrando un plano general de la cabeza de un desfile militar llegando al comienzo de la calle León y Castillo, pasando entre el Gobierno Militar de Las Palmas y el parque de San Telmo." 
+			},
+			"MGS/C03.jpg": { 
+			title: "Calle Triana, esquina con la calle Arena", 
+			description: "Plano general del edificio que se encuentra en la esquina que entrecruzan las calles de Triana y Arena. Son visibles los distintos comercios que se encuentran en la planta baja del citado edificio (entre ellos una farmacia, una relojería y un local llamado La Madrileña)." 
+			},
+			"MGS/C04.jpg": { 
+			title: "Calle Triana en la esquina con la calle Torres.", 
+			description: "Vista parcial de la calle Mayor de Triana tomada desde la esquina con la calle Torres. En la imagen destaca el trasiego de tartanas y carretas de tracción animal sobre la vía adoquinada, así como un hombre en primer plano con un animal de carga." 
+			},
+			"MGS/C05.jpg": { 
+			title: "Casa natal de Benito Pérez Galdós.", 
+			description: "Vista lateral de la fachada de la casa natal de Benito Pérez Galdós situada en la calle Cano, número 2 (Galdós vivió hasta los 19 años en esta vivienda familiar ubicada en el barrio de Triana)." 
+			},
+			"MGS/C06.jpg": { 
+			title: "Calle Muro, carruajes y catedral.", 
+			description: "Vista parcial de la calle Muro en el casco histórico de Triana. En el centro de la imagen y parcialmente oculto por los carruajes de la calle, se distingue el puente de Verdugo o puente de Piedra, que cruzaba el barranco Guiniguada y unía los barrios de Triana y Vegueta." 
+			},
+			"MGS/C07.jpg": { 
+			title: "Pabellón de Agricultura e Industria en la plaza de Hurtado de Mendoza.", 
+			description: "Vista general del pabellón de Agricultura e Industria en la plaza de Hurtado de Mendoza durante la celebración de la Fiesta de las Flores en abril de 1892." 
+			},
+			"MGS/C08.jpg": { 
+			title: "Las Palmas, puente de Verdugo.", 
+			description: "Vista parcial del puente Verdugo ('puente de piedra'). Se identifican dos de las cuatro estatuas que se erigen en sus cuatro esquinas y llamadas las cuatro estaciones. En segundo plano se observa el pequeño cauce del barranco Guiniguada." 
+			},
+			"MGS/C09.jpg": { 
+			title: "Las Palmas. Plaza de Santa Ana.", 
+			description: "Plano general de la Plaza de Santa Ana con el edificio del Ayuntamiento en el fondo de la imagen y las construcciones que la bordean. Numerosas personas miran hacia la cámara desde la plaza donde destaca el mobiliario y equipamiento urbano de la misma." 
+			},
+			"MGS/C10.jpg": { 
+			title: "Catedral de Las Palmas.", 
+			description: "Vista general de la fachada de la catedral de Las Palmas y de la plaza de Santa Ana." 
+			},
+			"MGS/C11.jpg": { 
+			title: "Plaza del Espíritu Santo.", 
+			description: "Vista general de la plaza del Espíritu Santo, en el casco histórico de Vegueta. En el centro de la imagen se ve la citada plazoleta, con parterres en los que destacan las altas palmeras canarias y el drago." 
+			},
+			"MGS/C12.jpg": { 
+			title: "Cortejo fúnebre pasando delante de la catedral de Santa Ana.", 
+			description: "Vista parcial de un cortejo fúnebre pasando delante de la catedral de Canarias, en el barrio histórico de Vegueta. Podría tatarse del cortejo fúnebre del poeta Tomás Morales." 
+			},
+			"MGS/C13.jpg": {
+			title: "Vegueta, plazoleta de Los Álamos.", 
+			description: "Vista parcial de la plazoleta de Los Álamos, ubicada en un lateral de la fachada posterior de la catedral de Las Palmas en el barrio de Vegueta." 
+			},
+			"MGS/C14.jpg": { 
+			title: "Teatro Pérez Galdós y Barranco Guiniguada.", 
+			description: "Vista general de la fachada del teatro Pérez Galdós ubicado en la zona sur del barrio histórico de Triana. En primer plano se ve parcialmente el cauce del barranco Guiniguada. En segundo plano se puede observar la fachada de estilo neoclásico y un lateral del teatro." 
+			},
+			"MGS/C15.jpg": { 
+			title: "Barranco Guiniguada y Puente de Palo.", 
+			description: "Vista parcial del cauce del barranco Guiniguada cerca de su desembocadura. En el centro de la imagen se ve el antiguo puente de López Botas, llamado popularmente Puente de Palo, que unía los barrios históricos de Vegueta y Triana a la altura del mercado. Sobre él se aprecian dos de los cuatro kioscos que flanqueaban sus extremos." 
+			},
+			"MGS/M01.jpg": { title: "Fachada de El Museo Canario", 
+			description: "Vista general de la fachada de El Museo Canario." 
+			},
+			"MGS/M02.jpg": {title: "Biblioteca de El Museo Canario.",
+			description: "Vista parcial de la biblioteca de El Museo Canario."
+			},
+			"MGS/M03.jpg": {title: "Antiguas salas de cerámicas aborígenes, El Museo Canario",
+			description: "Vista parcial de la que actualmente se conoce como Sala 10 'La cerámica aborigen de Gran Canaria' de El Museo Canario."
+			},
+			"MGS/M04.jpg": {title: "Antigua sala de minerales (Sección de Petrografía), El Museo Canario",
+			description: "Vista parcial de la antigua sala dedicada a minerales de El Museo Canario (denominada Sección de Petrografía en la época)."
+			},
+			"MGS/M05.jpg": {title: "Antigua sala de Malacología e Ictiología (Sala Ripoche), El Museo Canario",
+			description: "Vista parcial de la antigua sala de Malacología e Ictiología de El Museo Canario, llamada 'Sala Ripoche' (actualmente ocupa el mismo espacio la Sala 1 'El hábitat'). Destaca el material perteneciente a la colección de Ciencias Naturales. En primer plano se aprecia un pez manta."
+			},
+			"MGS/M06.jpg": {title: "Sala de 'La antropología física' (Sala 7), El Museo Canario",
+			description: "Vista parcial de la sala identificada como 'La antropología física' de El Museo Canario, dedicada al doctor René Verneau. Destacan los cráneos y demás restos óseos humanos en sus vitrinas, los bustos de diferentes razas sobre las mismas y los restos momificados alojados en las vitrinas centrales."
+			},
+			"MGS/M07.jpg": {title: "",
+			description: ""
+			},
+			"MGS/M08.jpg": {title: "",
+			description: ""
+			},
+			"MGS/M09.jpg": {title: "",
+			description: ""
+			},
+			"MGS/M10.jpg": {title: "Antigua sala de Malacología e Ictiología (Sala Ripoche), El Museo Canario",
+			description: "Vista parcial de la antigua sala de Malacología e Ictiología de El Museo Canario (actualmente sala 1, 'El hábitat'), dedicada al Doctor Chil y Naranjo. Destaca el material perteneciente a la colección de Ciencias Naturales."
+			},
+			"MGS/M11.jpg": {title: "Salas de tecnología lítica, morteros, molinos y cerámicas de El Museo Canario",
+			description: "Vista parcial de las actuales salas 9 'La tecnología cerámica' y 10 'La cerámica aborigen de Gran Canaria' de El Museo Canario, antiguamente empleadas para exponer tecnología lítica, morteros, molinos y cerámicas."
+			},
+			"MGS/M12.jpg": {title: "Grupo de visitantes en las salas de exposiciones de El Museo Canario",
+			description: "Retrato de conjunto realizado a un grupo de visitantes posando para la cámara en la actualmente identificada como sala de 'La antropología física' (Sala 7) de El Museo Canario, dedicada al doctor René Verneau."
+			},
+			"MGS/M14.jpg": {title: "Homenaje a Saulo Torón en El Museo Canario",
+			description: "Vista general del público asistente al homenaje a Saulo Torón organizado y realizado por El Museo Canario en su salón de actos. Se identifican sentados en primera fila, empezando por la izquierda, a: Vicente Doreste Medina, teniente de alcalde adjunto a la presidencia (segundo); Ervigio Díaz Bertrana, consejero de Cultura del Cabildo (tercero); Enrique Blanco Torrent, concejal delegado de cultura del Ayuntamiento de Las Palmas (cuarto); Pedro Cullen del Castillo (quinto); Lorenzo Olarte Cullen, presidente del Cabildo Insular de Gran Canaria (sexto); Juan Nogales Hernández, director de El Museo Canario (séptimo); Saulo Torón Macario (octavo) y María Isabel Torón Macario (novena)."
+			},
+		};
+
+		// Agregar botones de información en las imágenes
+		document.addEventListener("DOMContentLoaded", function () {
+			const openInfoButton = document.getElementById("openInfoButton");
+			const overlay = document.getElementById("overlay");
+
+		openInfoButton.addEventListener("click", function () {
+			let selectedImage = overlay.src;
+
+        // Asegurar que se obtiene solo el nombre del archivo
+        try {
+            selectedImage = "MGS/" + new URL(selectedImage, window.location.href).pathname.split('/').pop();
+        } catch (error) {
+            console.error("Error al obtener el nombre del archivo:", error);
+        }
+
+        // Buscar la información en imageInfo
+        if (imageInfo.hasOwnProperty(selectedImage)) {
+            const imageData = imageInfo[selectedImage];
+            openPopup(imageData.title, overlay.src, imageData.description);
+        } else {
+            console.warn("No se encontró información para la imagen:", selectedImage);
+            openPopup("Imagen Histórica", overlay.src, "No hay información disponible.");
+				}
+			});
+		});
+		
+		// Función para obtener la ubicación del usuario
+		let locationWatcherStarted = false;
+		function watchUserLocation() {
+			if (!locationWatcherStarted) {
+				locationWatcherStarted = true;
+
+				if ("geolocation" in navigator) {
+					navigator.geolocation.watchPosition(
+						position => {
+							const userLat = position.coords.latitude;
+							const userLng = position.coords.longitude;
+							checkProximity(userLat, userLng);
+						},
+						error => console.error("Error al obtener la ubicación:", error),
+						{
+							enableHighAccuracy: true,
+							maximumAge: 5000,
+							timeout: 5000
+						}
+					);
+				} else {
+					console.error("Geolocalización no soportada en este navegador.");
+				}
+			}
+		}
+
+		// Función para calcular la distancia entre dos coordenadas en metros
+		function calculateDistance(lat1, lng1, lat2, lng2) {
+			const R = 6371e3; // Radio de la Tierra en metros
+			const φ1 = lat1 * (Math.PI / 180);
+			const φ2 = lat2 * (Math.PI / 180);
+			const Δφ = (lat2 - lat1) * (Math.PI / 180);
+			const Δλ = (lng2 - lng1) * (Math.PI / 180);
+
+			const a =
+				Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+				Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+			return R * c; // Distancia en metros
+		}
+
+		// Función para verificar si el usuario está cerca de un marcador
+		function checkProximity(userLat, userLng) {
+			const imageSelect = document.getElementById("imageSelect");
+			const overlay = document.getElementById("overlay");
+
+			if (!imageSelect || !overlay) {
+				console.error("Elementos no encontrados: imageSelect o overlay.");
+				return;
+		}
+			
+			const proximityRadius = 20; // Radio en metros para activar la imagen
+
+			Object.keys(imageLocations).forEach(image => {
+				const { lat, lng } = imageLocations[image];
+				const distance = calculateDistance(userLat, userLng, lat, lng);
+
+				if (distance <= proximityRadius) {
+				    if (overlay.src !== image) { // Solo notificar si la imagen cambia
+					alert(`¡Nueva imagen detectada cerca! Se ha seleccionado: ${image.split("/").pop()}`);
+                
+					if ("vibrate" in navigator) {
+                    navigator.vibrate(200); // Vibración de 200 ms en móviles
+                }
+            }
+
+					// Seleccionar automáticamente la imagen en el dropdown
+					imageSelect.value = image;
+					overlay.src = image;
+				}
+			});
+		}
+
+		window.addEventListener("load", function() {
+			// **Iniciar la detección de ubicación**
+			watchUserLocation();
+		});
+
+		document.addEventListener("DOMContentLoaded", function() {
+			const settingsButton = document.getElementById("settingsButton");
+			if (!settingsButton) {
+				console.error("Error: No se encontró el botón de configuración.");
+				return;
+			}
+			let cameraActive = true;
+			let locationActive = true;
+
+		settingsButton.addEventListener("click", function() {
+			const cameraElement = document.getElementById("camera");
+
+        // Alternar la cámara
+        if (cameraActive) {
+            let stream = cameraElement.srcObject;
+            if (stream) {
+                let tracks = stream.getTracks();
+                tracks.forEach(track => track.stop()); // Detener la cámara
+            }
+            cameraElement.srcObject = null;
+            console.log("Cámara desactivada");
+        } else {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    cameraElement.srcObject = stream;
+                    console.log("Cámara activada");
+                })
+                .catch(err => console.error("Error al acceder a la cámara:", err));
+        }
+        cameraActive = !cameraActive;
+
+        // Alternar la detección de ubicación
+        if (locationActive) {
+            console.log("Ubicación desactivada");
+            locationActive = false;
+        } else {
+            watchUserLocation();
+            console.log("Ubicación activada");
+            locationActive = true;
+        }
+			});
+		});
+		
     </script>
 </body>
 </html>
