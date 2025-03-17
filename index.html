@@ -1015,26 +1015,47 @@
 				tempCanvas.height = videoHeight;
 
 				// Dibujar el frame actual del video en el canvas
-				ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
-
-				// Dibujar la imagen superpuesta si existe
-				if (overlay.src && overlay.complete) {
-					ctx.globalAlpha = parseFloat(overlay.style.opacity) || 0.5; // Aplicar opacidad
-					ctx.drawImage(overlay, 0, 0, videoWidth, videoHeight);
-					ctx.globalAlpha = 1.0; // Restaurar la opacidad
+				try {
+					ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+				} catch (error) {
+					console.error("Error al capturar el video:", error);
+					alert("Error al capturar el video. Intenta de nuevo.");
+					return;
 				}
 
-				// Convertir a imagen y descargar
-				tempCanvas.toBlob(blob => {
-					if (blob) {
-						const link = document.createElement("a");
-						link.href = URL.createObjectURL(blob);
-						link.download = "comparacion_retroSpectare.png";
-						link.click();
-					} else {
-						console.error("Error: No se pudo generar la imagen.");
-					}
-				});
+				// Dibujar la imagen superpuesta si existe y está cargada
+				if (overlay.src && overlay.complete) {
+					const img = new Image();
+					img.src = overlay.src;
+					img.crossOrigin = "anonymous"; // Evitar restricciones CORS
+
+					img.onload = function () {
+						ctx.globalAlpha = parseFloat(overlay.style.opacity) || 0.5; // Aplicar opacidad
+						ctx.drawImage(img, 0, 0, videoWidth, videoHeight);
+						ctx.globalAlpha = 1.0; // Restaurar la opacidad
+
+						// Convertir a imagen y descargar
+						tempCanvas.toBlob(blob => {
+							if (blob) {
+								const link = document.createElement("a");
+								link.href = URL.createObjectURL(blob);
+								link.download = "comparacion_retroSpectare.png";
+								link.click();
+							} else {
+								console.error("Error: No se pudo generar la imagen.");
+							}
+						});
+					};
+
+					img.onerror = function () {
+						console.error("Error al cargar la imagen superpuesta.");
+						alert("Error al cargar la imagen superpuesta.");
+					};
+
+				} else {
+					console.warn("No hay imagen superpuesta seleccionada.");
+					alert("Selecciona una imagen antes de capturar la comparación.");
+				}
 			});
 		});
 		
