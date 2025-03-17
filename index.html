@@ -991,35 +991,13 @@
 		
 		document.addEventListener("DOMContentLoaded", function () {
 			document.getElementById("captureButton").addEventListener("click", function () {
-				const container = document.querySelector(".container");
-				const video = document.getElementById("camera");
-
-				// Obtener dimensiones reales del video
-				const videoWidth = video.videoWidth || 300;
-				const videoHeight = video.videoHeight || 360;
-
-				// Ajustar tamaño del contenedor para que coincida con la resolución del video
-				container.style.width = videoWidth + "px";
-				container.style.height = videoHeight + "px";
+				const container = document.querySelector(".container"); // Capturar toda la vista de la cámara
 
 				html2canvas(container, {
-					useCORS: true,
-					backgroundColor: null,
-					width: videoWidth, // Forzar ancho correcto
-					height: videoHeight, // Forzar alto correcto
-					scale: 1 // Evitar escalado automático
+					useCORS: true, // Evita problemas con imágenes externas
+					backgroundColor: null // Mantiene transparencia
 				}).then(canvas => {
-					// Crear un nuevo canvas con la resolución correcta
-					const scaledCanvas = document.createElement("canvas");
-					scaledCanvas.width = videoWidth;
-					scaledCanvas.height = videoHeight;
-					const ctx = scaledCanvas.getContext("2d");
-
-					// Dibujar la imagen capturada en el tamaño correcto
-					ctx.drawImage(canvas, 0, 0, videoWidth, videoHeight);
-
-					// Convertir a imagen y descargar
-					scaledCanvas.toBlob(blob => {
+					canvas.toBlob(blob => {
 						if (blob) {
 							const link = document.createElement("a");
 							link.href = URL.createObjectURL(blob);
