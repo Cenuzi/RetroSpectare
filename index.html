@@ -1005,23 +1005,16 @@
 				const tempCanvas = document.createElement("canvas");
 				const ctx = tempCanvas.getContext("2d");
 
-				// Esperar a que el video esté listo
-				await new Promise(resolve => setTimeout(resolve, 200)); // Esperar un breve momento
-
 				// Ajustar el tamaño del canvas según el video
-				const videoWidth = video.videoWidth || 300;
-				const videoHeight = video.videoHeight || 360;
-				tempCanvas.width = videoWidth;
-				tempCanvas.height = videoHeight;
+				const videoTrack = video.srcObject.getVideoTracks()[0];
+				const capture = new ImageCapture(videoTrack);
+				const frameBitmap = await capture.grabFrame();
 
-				// Dibujar el frame actual del video en el canvas
-				try {
-					ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
-				} catch (error) {
-					console.error("Error al capturar el video:", error);
-					alert("Error al capturar el video. Intenta de nuevo.");
-					return;
-				}
+				tempCanvas.width = frameBitmap.width;
+				tempCanvas.height = frameBitmap.height;
+
+				// Dibujar el frame de la cámara
+				ctx.drawImage(frameBitmap, 0, 0, tempCanvas.width, tempCanvas.height);
 
 				// Dibujar la imagen superpuesta si existe y está cargada
 				if (overlay.src && overlay.complete) {
@@ -1031,7 +1024,7 @@
 
 					img.onload = function () {
 						ctx.globalAlpha = parseFloat(overlay.style.opacity) || 0.5; // Aplicar opacidad
-						ctx.drawImage(img, 0, 0, videoWidth, videoHeight);
+						ctx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
 						ctx.globalAlpha = 1.0; // Restaurar la opacidad
 
 						// Convertir a imagen y descargar
@@ -1051,7 +1044,6 @@
 						console.error("Error al cargar la imagen superpuesta.");
 						alert("Error al cargar la imagen superpuesta.");
 					};
-
 				} else {
 					console.warn("No hay imagen superpuesta seleccionada.");
 					alert("Selecciona una imagen antes de capturar la comparación.");
