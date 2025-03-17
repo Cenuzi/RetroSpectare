@@ -989,8 +989,8 @@
 		
 		<!-- Función sobre la captura de comparación -->
 		
-		document.addEventListener("DOMContentLoaded", function() {
-			document.getElementById("captureButton").addEventListener("click", async function() {
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("captureButton").addEventListener("click", async function () {
 				const video = document.getElementById("camera");
 				const overlay = document.getElementById("overlay");
 
@@ -1005,22 +1005,20 @@
 				const tempCanvas = document.createElement("canvas");
 				const ctx = tempCanvas.getContext("2d");
 
-				// Ajustar el tamaño del canvas según el video
-				const videoTrack = video.srcObject.getVideoTracks()[0];
-				const capture = new ImageCapture(videoTrack);
-				const frameBitmap = await capture.grabFrame();
+				// Obtener dimensiones del video
+				const videoWidth = video.videoWidth || 300;
+				const videoHeight = video.videoHeight || 360;
+				tempCanvas.width = videoWidth;
+				tempCanvas.height = videoHeight;
 
-				tempCanvas.width = frameBitmap.width;
-				tempCanvas.height = frameBitmap.height;
+				// Capturar un frame real del video
+				ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
 
-				// Dibujar el frame de la cámara
-				ctx.drawImage(frameBitmap, 0, 0, tempCanvas.width, tempCanvas.height);
-
-				// Dibujar la imagen superpuesta si existe y está cargada
+				// Verificar si hay una imagen superpuesta
 				if (overlay.src && overlay.complete) {
 					const img = new Image();
-					img.src = overlay.src;
 					img.crossOrigin = "anonymous"; // Evitar restricciones CORS
+					img.src = overlay.src;
 
 					img.onload = function () {
 						ctx.globalAlpha = parseFloat(overlay.style.opacity) || 0.5; // Aplicar opacidad
@@ -1044,6 +1042,7 @@
 						console.error("Error al cargar la imagen superpuesta.");
 						alert("Error al cargar la imagen superpuesta.");
 					};
+
 				} else {
 					console.warn("No hay imagen superpuesta seleccionada.");
 					alert("Selecciona una imagen antes de capturar la comparación.");
