@@ -7,6 +7,9 @@
     <title>RetroSpectare PMV</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+	<link rel="preload" as="image" href="MGS/logo.png">
+	<link rel="preload" as="font" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols&display=swap" crossorigin="anonymous">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols&display=swap');
         
@@ -379,6 +382,57 @@
 			border-color: white;
 		}
 		
+		#resetOverlay {
+			position: absolute;
+			left: -70px; /* Alineado a la izquierda como el botón de configuración */
+			top: 75%; /* Ajusta la posición encima del botón de configuración */
+			transform: translateY(-50%);
+			width: 50px;
+			height: 50px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 50%; /* Hace que el botón sea circular */
+			cursor: pointer;
+			font-size: 24px;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}
+
+		#resetOverlay:hover {
+			background: #2196F3;
+			color: white;
+			border-color: white;
+		}
+		
+		#captureButton {
+			position: absolute;
+			right: -70px; /* Mantiene la alineación con los otros botones flotantes */
+			top: 200px; /* Ubicarlo debajo del botón de fichas de información */
+			width: 45px;
+			height: 50px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 10px;
+			cursor: pointer;
+			font-size: 24px;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}
+
+		#captureButton:hover {
+			background: #2196F3;
+			color: white;
+			border-color: white;
+		}
+	
     </style>
 </head>
 <body>
@@ -416,6 +470,17 @@
 				<button id="closeMuseumMap" class="close-map-button">&times;</button>
 				<div id="museumMap"></div>
 			</div>
+			
+			<!-- Botón de reset -->
+			<button id="resetOverlay" class="settings-toggle">
+				<i class="fas fa-undo"></i>
+			</button>
+			
+			<!-- Botón de capturar comparación -->
+			<button id="captureButton" class="map-toggle">
+				<i class="fas fa-camera"></i>
+			</button>
+
         </div>
 		
         <div class="controls-container">
@@ -547,15 +612,19 @@
 			"MGS/M01.jpg": { lat: 28.09994446913674, lng: -15.415180608216648 },
 		};
 		
-		Object.keys(imageLocations).forEach(image => {
-			const { lat, lng } = imageLocations[image];
-			const marker = L.marker([lat, lng]).addTo(map)
-				.bindPopup(`<img src="${image}" width="100px"><br>${image.split("/").pop()}`)
-				.on("click", () => {
-					imageSelect.value = image;  // Selecciona la imagen en el dropdown
-					overlay.src = image;        // Cambia la imagen superpuesta
-				});
-		});
+		function addMarkersToMap(locations, map) {
+			Object.entries(locations).forEach(([image, { lat, lng }]) => {
+				L.marker([lat, lng])
+					.addTo(map)
+					.bindPopup(`<img src="${image}" width="100px"><br>${image.split("/").pop()}`)
+					.on("click", () => {
+						document.getElementById("imageSelect").value = image;
+						document.getElementById("overlay").src = image;
+					});
+			});
+		}
+
+		addMarkersToMap(imageLocations, map);
 		
 		imageSelect.addEventListener("change", event => {
 			const selectedImage = event.target.value;
@@ -568,6 +637,7 @@
 		});
 		
 		const clickSound = new Audio("MGS/VL.mp3");
+				
 		Object.keys(imageLocations).forEach(image => {
 			const { lat, lng } = imageLocations[image];
 			const marker = L.marker([lat, lng]).addTo(map)
@@ -828,6 +898,7 @@
 		}
 
 		// Función para verificar si el usuario está cerca de un marcador
+		
 		function checkProximity(userLat, userLng) {
 			const imageSelect = document.getElementById("imageSelect");
 			const overlay = document.getElementById("overlay");
@@ -904,6 +975,66 @@
             console.log("Ubicación activada");
             locationActive = true;
         }
+			});
+		});
+		
+		document.addEventListener("DOMContentLoaded", function() {
+			document.getElementById("resetOverlay").addEventListener("click", function() {
+				document.getElementById("overlay").src = "";
+				document.getElementById("opacity").value = 0.5;
+				document.getElementById("overlay").style.opacity = 0.5;
+				document.getElementById("imageSelect").value = "";
+			});
+		});
+		
+		<!-- Función sobre la captura de comparación -->
+		
+		document.addEventListener("DOMContentLoaded", function() {
+			document.getElementById("captureButton").addEventListener("click", async function() {
+				const video = document.getElementById("camera");
+				const overlay = document.getElementById("overlay");
+
+				// Asegurar que la cámara está activa
+				if (!video.srcObject) {
+					alert("La cámara no está activa. Actívala e intenta nuevamente.");
+					console.error("Error: La cámara no está activada.");
+					return;
+				}
+
+				// Crear un canvas para capturar el video y la imagen superpuesta
+				const tempCanvas = document.createElement("canvas");
+				const ctx = tempCanvas.getContext("2d");
+
+				// Esperar a que el video esté listo
+				await new Promise(resolve => setTimeout(resolve, 200)); // Esperar un breve momento
+
+				// Ajustar el tamaño del canvas según el video
+				const videoWidth = video.videoWidth || 300;
+				const videoHeight = video.videoHeight || 360;
+				tempCanvas.width = videoWidth;
+				tempCanvas.height = videoHeight;
+
+				// Dibujar el frame actual del video en el canvas
+				ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+				// Dibujar la imagen superpuesta si existe
+				if (overlay.src && overlay.complete) {
+					ctx.globalAlpha = parseFloat(overlay.style.opacity) || 0.5; // Aplicar opacidad
+					ctx.drawImage(overlay, 0, 0, videoWidth, videoHeight);
+					ctx.globalAlpha = 1.0; // Restaurar la opacidad
+				}
+
+				// Convertir a imagen y descargar
+				tempCanvas.toBlob(blob => {
+					if (blob) {
+						const link = document.createElement("a");
+						link.href = URL.createObjectURL(blob);
+						link.download = "comparacion_retroSpectare.png";
+						link.click();
+					} else {
+						console.error("Error: No se pudo generar la imagen.");
+					}
+				});
 			});
 		});
 		
