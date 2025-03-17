@@ -990,63 +990,24 @@
 		<!-- Función sobre la captura de comparación -->
 		
 		document.addEventListener("DOMContentLoaded", function () {
-			document.getElementById("captureButton").addEventListener("click", async function () {
-				const video = document.getElementById("camera");
-				const overlay = document.getElementById("overlay");
+			document.getElementById("captureButton").addEventListener("click", function () {
+				const container = document.querySelector(".container"); // Capturar toda la vista de la cámara
 
-				// Asegurar que la cámara está activa
-				if (!video.srcObject) {
-					alert("La cámara no está activa. Actívala e intenta nuevamente.");
-					console.error("Error: La cámara no está activada.");
-					return;
-				}
-
-				// Crear un canvas para capturar el video y la imagen superpuesta
-				const tempCanvas = document.createElement("canvas");
-				const ctx = tempCanvas.getContext("2d");
-
-				// Obtener dimensiones del video
-				const videoWidth = video.videoWidth || 300;
-				const videoHeight = video.videoHeight || 360;
-				tempCanvas.width = videoWidth;
-				tempCanvas.height = videoHeight;
-
-				// Capturar un frame real del video
-				ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-
-				// Verificar si hay una imagen superpuesta
-				if (overlay.src && overlay.complete) {
-					const img = new Image();
-					img.crossOrigin = "anonymous"; // Evitar restricciones CORS
-					img.src = overlay.src;
-
-					img.onload = function () {
-						ctx.globalAlpha = parseFloat(overlay.style.opacity) || 0.5; // Aplicar opacidad
-						ctx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
-						ctx.globalAlpha = 1.0; // Restaurar la opacidad
-
-						// Convertir a imagen y descargar
-						tempCanvas.toBlob(blob => {
-							if (blob) {
-								const link = document.createElement("a");
-								link.href = URL.createObjectURL(blob);
-								link.download = "comparacion_retroSpectare.png";
-								link.click();
-							} else {
-								console.error("Error: No se pudo generar la imagen.");
-							}
-						});
-					};
-
-					img.onerror = function () {
-						console.error("Error al cargar la imagen superpuesta.");
-						alert("Error al cargar la imagen superpuesta.");
-					};
-
-				} else {
-					console.warn("No hay imagen superpuesta seleccionada.");
-					alert("Selecciona una imagen antes de capturar la comparación.");
-				}
+				html2canvas(container, {
+					useCORS: true, // Evita problemas con imágenes externas
+					backgroundColor: null // Mantiene transparencia
+				}).then(canvas => {
+					canvas.toBlob(blob => {
+						if (blob) {
+							const link = document.createElement("a");
+							link.href = URL.createObjectURL(blob);
+							link.download = "comparacion_retroSpectare.png";
+							link.click();
+						} else {
+							console.error("Error: No se pudo generar la imagen.");
+						}
+					});
+				}).catch(error => console.error("Error al capturar la imagen:", error));
 			});
 		});
 		
