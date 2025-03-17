@@ -32,22 +32,86 @@
             align-items: center;
             margin-top: 20px;
         }
-        .splash-screen {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 1s ease-out;
-        }
-        .splash-screen img {
-            width: 50vw;
-            max-width: 300px;
-            height: auto;
-        }
+
+		/* Contenedor de la pantalla de inicio */
+		.splash-screen {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			z-index: 1000;
+			flex-direction: column;
+			transition: opacity 1s ease-out;
+			background-color: black; /* Fondo negro para logo de RetroSpectare */
+			
+		}
+		
+		/* Primera fase con fondo negro */
+		#phase1 {
+			background-color: black; /* Fondo negro solo para el logo de RetroSpectare */
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		/* Segunda fase con fondo blanco */
+		#phase2 {
+			background-color: white; /* Fondo blanco para los logos de patrocinadores */
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		/* Contenedor de cada fase (logo de RetroSpectare y logos de patrocinadores) */
+		.splash-phase {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			position: absolute;
+			transition: opacity 1s ease-in-out;
+		}
+
+		/* Logo de RetroSpectare */
+		.splash-logo {
+			max-width: 45vw;
+			max-height: 45vh;
+			height: auto;
+		}
+
+		/* Logos de patrocinadores */
+		.splash-logos {
+			max-width: 40vw;
+			max-height: 40vh;
+			height: auto;
+			margin-top: 20px;
+		}
+
+		/* Texto "Con el apoyo de:" */
+		.splash-title {
+			font-size: 1.5em;
+			font-weight: bold;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		/* Ocultar elementos con transición suave */
+		.hidden {
+			opacity: 0;
+			pointer-events: none;
+		}
+		
         .banner {
             background: linear-gradient(90deg, #4CAF50, #2196F3);
             color: white;
@@ -195,7 +259,7 @@
             margin-top: auto;
         }
         .footer img {
-            height: 40px;
+            height: 60px;
             width: auto;
             margin-right: 15px;
         }
@@ -459,14 +523,131 @@
 			color: white;
 			border-color: white;
 		}
+		
+		.routes-toggle {
+			position: absolute;
+			right: -70px; /* Ubicación junto a otros botones flotantes */
+			top: 260px; /* Ajusta la posición debajo de otros botones */
+			width: 45px;
+			height: 50px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 10px;
+			cursor: pointer;
+			font-size: 24px;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}
+
+		.routes-toggle:hover {
+			background: #2196F3;
+			color: white;
+			border-color: white;
+		}
+		
+		.routes-menu {
+			position: fixed;
+			right: -390px;
+			top: 0;
+			width: 350px;
+			height: 100vh;
+			background: white;
+			box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+			transition: right 0.3s ease-in-out;
+			padding: 20px;
+			overflow-y: auto;
+			z-index: 999;
+		}
+
+		.close-menu-button {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: red;
+			color: white;
+			border: none;
+			font-size: 24px;
+			font-weight: bold;
+			padding: 5px 10px;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+
+		.close-menu-button:hover {
+			background: darkred;
+		}
+		
+		.route-item {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			border-bottom: 1px solid #ddd;
+			padding: 10px 0;
+		}
+
+		.route-thumbnail {
+			width: 60px;
+			height: 60px;
+			border-radius: 5px;
+		}
+
+		.start-route-button {
+			background: #2196F3;
+			color: white;
+			border: none;
+			padding: 5px 10px;
+			cursor: pointer;
+			border-radius: 5px;
+			font-size: 14px;
+		}
+
+		.start-route-button:hover {
+			background: #1976D2;
+		}
+		
+		.next-image-button {
+			margin-top: 10px;
+			padding: 8px 12px;
+			background: #2196F3;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			font-size: 16px;
+			cursor: pointer;
+			display: block;
+			width: 100%;
+			max-width: 200px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.next-image-button:hover {
+			background: #1976D2;
+		}
 	
     </style>
 </head>
 <body>
-    <div class="splash-screen" id="splash">
-        <img src="MGS/logo.png" alt="RetroSpectare Logo">
-    </div>
+    
+	<div class="splash-screen" id="splash">
+		<!-- Primera fase: Logo de RetroSpectare -->
+		<div class="splash-phase" id="phase1">
+			<img src="MGS/logo.png" alt="RetroSpectare Logo" class="splash-logo">
+		</div>
+
+		<!-- Segunda fase: Logos de patrocinadores -->
+		<div class="splash-phase hidden" id="phase2">
+			<h2 class="splash-title">Con el apoyo de:</h2>
+			<img src="MGS/logos.png" alt="Patrocinadores" class="splash-logos">
+		</div>
+	</div>
+
     <div class="banner">RetroSpectare</div>
+	
     <div class="content">
         <div class="container">
             <video id="camera" autoplay></video>
@@ -512,6 +693,11 @@
 			<button id="toggleCamera" class="settings-toggle">
 				<i class="fas fa-sync-alt"></i>
 			</button>
+			
+			<!-- Botón de rutas -->
+			<button id="routesButton" class="routes-toggle">
+				<i class="fas fa-route"></i>
+			</button>
 
         </div>
 		
@@ -519,6 +705,7 @@
             <div class="controls">
                 <label for="imageSelect">📷 Selecciona una imagen:</label>
                 <select id="imageSelect"></select>
+				<button id="nextRouteImageButton" class="next-image-button">➡️ Siguiente imagen</button>
                 <div class="control-group">
                     <label for="opacity">🔆 Ajustar Opacidad:</label>
                     <input type="range" id="opacity" min="0" max="1" step="0.01" value="0.5">
@@ -540,36 +727,37 @@
 		<button id="closeMap" class="close-map-button" style="position:absolute; top:10px; right:10px;">&times;</button>
 		<div id="map"></div>
 	</div>
+	
+	<div id="routesMenu" class="routes-menu">
+		<button id="closeRoutesMenu" class="close-menu-button">&times;</button>
+			<h2>📍 Rutas Disponibles</h2>
+		<div id="routesList"></div>
+	</div>
+
     <div class="footer">
-        <img src="MGS/MC.png" alt="Museo Canario Logo">
+		<img src="MGS/MC.png" alt="Museo Canario Logo">
         <div class="footer-text">© 2024 RetroSpectare. Todos los derechos reservados.</div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
 	
 		window.addEventListener("load", function() {
-			// **Pantalla de inicio y botón de mapa**
-			const splash = document.getElementById('splash');
-			const mapButton = document.getElementById('mapButton');
-			    
-				if (!splash) {
-					console.error("Error: No se encontró el elemento #splash.");
-					return;
-				}
-
-				if (!mapButton) {
-					console.error("Error: No se encontró el elemento #mapButton.");
-					return;
-				}
-				
-			mapButton.style.display = 'none';
 			setTimeout(() => {
-				splash.style.opacity = '0';
+				// Oculta la primera fase (logo de RetroSpectare)
+				document.getElementById("phase1").classList.add("hidden");
+
 				setTimeout(() => {
-					splash.style.display = 'none';
-					mapButton.style.display = 'block';
-				}, 1000);
-			}, 3000);
+					// Muestra la segunda fase (logos de patrocinadores)
+					document.getElementById("phase2").classList.remove("hidden");
+
+					setTimeout(() => {
+						// Oculta toda la pantalla de inicio
+						document.getElementById("splash").classList.add("hidden");
+					}, 3000); // Tiempo que los logos de patrocinadores estarán visibles
+
+				}, 500); // Pequeña pausa entre fases
+
+			}, 2000); // Tiempo del logo de RetroSpectare en pantalla
 		});
 		
 		window.addEventListener("load", function() {
@@ -1056,32 +1244,160 @@
 			}, 500);
 		};
 		
-		let currentCamera = "environment"; // "environment" (trasera) o "user" (frontal)
+		let currentCamera = "environment"; // Iniciar con la cámara trasera
 		let videoElement = document.getElementById("camera");
 
-		function startCamera(cameraFacing) {
-			if (videoElement.srcObject) {
-				let tracks = videoElement.srcObject.getTracks();
-				tracks.forEach(track => track.stop());
-			}
+		async function startCamera(cameraFacing) {
+			try {
+				// Detener la transmisión actual si existe
+				if (videoElement.srcObject) {
+					let tracks = videoElement.srcObject.getTracks();
+					tracks.forEach(track => track.stop());
+				}
 
-			navigator.mediaDevices.getUserMedia({
-				video: { facingMode: cameraFacing }
-			})
-			.then(stream => {
+				// Intentar acceder a la cámara con más control sobre la resolución
+				let stream = await navigator.mediaDevices.getUserMedia({
+					video: { 
+						facingMode: cameraFacing,
+						width: { ideal: 1280 }, 
+						height: { ideal: 720 } 
+					}
+				});
+
 				videoElement.srcObject = stream;
-			})
-			.catch(err => console.error("Error al acceder a la cámara:", err));
+			} catch (err) {
+				console.error("Error al acceder a la cámara:", err);
+				alert("No se pudo acceder a la cámara " + (cameraFacing === "user" ? "frontal" : "trasera"));
+			}
 		}
 
+		// Alternar entre cámaras
 		document.getElementById("toggleCamera").addEventListener("click", function() {
 			currentCamera = (currentCamera === "environment") ? "user" : "environment";
 			startCamera(currentCamera);
 		});
 
-		// Iniciar la cámara con la trasera por defecto
+		// Iniciar con la cámara trasera
 		window.addEventListener("load", function() {
 			startCamera(currentCamera);
+		});
+		
+		const routes = {
+			"Triana": {
+				images: ["MGS/C03.jpg", "MGS/C04.jpg", "MGS/C05.jpg", "MGS/C14.jpg"],
+				description: "Explora la histórica calle Triana y sus alrededores.",
+				thumbnail: "MGS/C03.jpg"
+			},
+			"Vegueta": {
+				images: ["MGS/C09.jpg", "MGS/C10.jpg", "MGS/C12.jpg", "MGS/C13.jpg", "MGS/C15.jpg"],
+				description: "Recorre los sitios más emblemáticos del barrio de Vegueta.",
+				thumbnail: "MGS/C10.jpg"
+			},
+			"Museo Canario": {
+				images: ["MGS/M01.jpg", "MGS/M02.jpg", "MGS/M03.jpg", "MGS/M04.jpg", "MGS/M06.jpg"],
+				description: "Descubre la historia en El Museo Canario.",
+				thumbnail: "MGS/M01.jpg"
+			},
+			"Barranco Guiniguada": {
+				images: ["MGS/C08.jpg", "MGS/C15.jpg", "MGS/C14.jpg"],
+				description: "Sigue la ruta del Barranco Guiniguada y su legado histórico.",
+				thumbnail: "MGS/C08.jpg"
+			}
+		};
+
+		function loadRoutesMenu() {
+			const routesList = document.getElementById("routesList");
+			routesList.innerHTML = ""; // Limpiar el contenido previo
+
+			Object.entries(routes).forEach(([routeName, routeData]) => {
+				const routeItem = document.createElement("div");
+				routeItem.classList.add("route-item");
+				routeItem.innerHTML = `
+					<img src="${routeData.thumbnail}" alt="${routeName}" class="route-thumbnail">
+					<div>
+						<h3>${routeName}</h3>
+						<p>${routeData.description}</p>
+						<button class="start-route-button" data-route="${routeName}">Iniciar Ruta</button>
+					</div>
+				`;
+				routesList.appendChild(routeItem);
+			});
+
+			document.querySelectorAll(".start-route-button").forEach(button => {
+				button.addEventListener("click", function () {
+					startRoute(this.getAttribute("data-route"));
+				});
+			});
+		}
+		
+		let currentRouteImages = [];
+			let currentRouteIndex = 0;
+
+			function startRoute(routeName) {
+				if (!routes[routeName]) return;
+
+				currentRouteImages = routes[routeName].images;
+				currentRouteIndex = 0;
+
+				showCurrentRouteImage();
+			}
+
+			function showCurrentRouteImage() {
+				if (currentRouteIndex < currentRouteImages.length) {
+					const imageSrc = currentRouteImages[currentRouteIndex];
+
+					// Aplicar transición de salida
+					overlay.style.opacity = "0";  // Desvanecer la imagen actual
+					overlay.style.left = "60%";  // Mover la imagen ligeramente a la derecha
+
+					setTimeout(() => {
+						overlay.src = imageSrc;  // Cambiar la imagen
+						overlay.style.left = "50%";  // Regresar la imagen al centro
+						overlay.style.opacity = "0.5";  // Volver a mostrar la imagen
+					}, 500);  // Esperar 500ms para completar la transición
+
+					// Si la imagen tiene ubicación, mover el mapa
+					if (imageLocations[imageSrc]) {
+						const { lat, lng } = imageLocations[imageSrc];
+						map.setView([lat, lng], 15);
+					}
+
+					currentRouteIndex++;
+				} else {
+					alert("¡Has completado la ruta!");
+					currentRouteIndex = 0; // Reiniciar la ruta
+				}
+			}
+			
+		document.getElementById("nextRouteImageButton").addEventListener("click", showCurrentRouteImage);
+		
+		document.addEventListener("DOMContentLoaded", function () {
+			const routesButton = document.getElementById("routesButton");
+			const routesMenu = document.getElementById("routesMenu");
+			const closeRoutesMenu = document.getElementById("closeRoutesMenu");
+
+			if (!routesButton || !routesMenu || !closeRoutesMenu) {
+				console.error("Error: No se encontraron los elementos del menú de rutas.");
+				return;
+			}
+
+			// Función para alternar la visibilidad del menú de rutas
+			function toggleRoutesMenu() {
+				if (routesMenu.style.right === "0px") {
+					routesMenu.style.right = "-390px"; // Ocultar menú
+				} else {
+					routesMenu.style.right = "0px"; // Mostrar menú
+					loadRoutesMenu(); // Cargar las rutas en el menú
+				}
+			}
+
+			// Agregar evento de clic al botón de rutas
+			routesButton.addEventListener("click", toggleRoutesMenu);
+
+			// Agregar evento de clic para cerrar el menú
+			closeRoutesMenu.addEventListener("click", function () {
+				routesMenu.style.right = "-390px"; // Ocultar menú
+			});
 		});
 	
     </script>
