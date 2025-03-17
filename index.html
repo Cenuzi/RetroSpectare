@@ -100,6 +100,7 @@
 			max-height: 100%;  /* Permite que mantenga su proporción */
 			object-fit: contain; /* Evita cortes en la imagen */
 			opacity: 0.5; /* Mantiene la opacidad controlada */
+			transition: left 0.5s ease-in-out, opacity 0.5s ease-in-out;
 			position: absolute;
 			top: 50%;
 			left: 50%;
@@ -432,6 +433,32 @@
 			color: white;
 			border-color: white;
 		}
+		
+		#toggleCamera {
+			position: absolute;
+			left: -70px; /* Mismo alineamiento que el botón de reset */
+			top: 60%; /* Ajusta la altura para colocarlo encima del botón de reset */
+			transform: translateY(-50%);
+			width: 50px;
+			height: 50px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 50%; /* Hace que el botón sea circular */
+			cursor: pointer;
+			font-size: 24px;
+			color: #2196F3;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+		}
+
+		#toggleCamera:hover {
+			background: #2196F3;
+			color: white;
+			border-color: white;
+		}
 	
     </style>
 </head>
@@ -479,6 +506,11 @@
 			<!-- Botón de capturar comparación -->
 			<button id="captureButton" class="map-toggle">
 				<i class="fas fa-camera"></i>
+			</button>
+			
+			<!-- Botón para alternar entre cámaras -->
+			<button id="toggleCamera" class="settings-toggle">
+				<i class="fas fa-sync-alt"></i>
 			</button>
 
         </div>
@@ -574,8 +606,15 @@
 			images.map(src => `<option value="${src}">${src.split("/").pop()}</option>`).join('');
 
 		imageSelect.addEventListener("change", event => {
-			if (event.target.value) { // Solo cambia la imagen si hay una selección válida
-        overlay.src = event.target.value;
+			if (event.target.value) {
+				overlay.style.opacity = "0"; // Ocultar imagen actual
+				overlay.style.left = "60%"; // Mueve la imagen ligeramente a la derecha
+
+				setTimeout(() => {
+					overlay.src = event.target.value;
+					overlay.style.left = "50%"; // Vuelve a la posición original centrada
+					overlay.style.opacity = "0.5";
+				}, 500);
 			}
 		});
 		
@@ -643,8 +682,8 @@
 			const marker = L.marker([lat, lng]).addTo(map)
 				.bindPopup(`<img src="${image}" width="100px"><br>${image.split("/").pop()}`)
 				.on("click", () => {
-					imageSelect.value = image;  // Seleccionar imagen en dropdown
-					overlay.src = image;        // Cambiar la imagen superpuesta
+					imageSelect.value = image;  // Seleccionar imagen en el dropdown
+					changeOverlayImage(image);  // Usar la nueva función corregida
 					clickSound.play();          // Reproducir sonido
 				});
 		});
@@ -701,18 +740,15 @@
 		
 		museumMarkers.forEach(({ coords, title, img }) => {
 			L.marker(coords).addTo(museumMap)
-			.bindPopup(`<b>${title}</b><br><img src='${img}' width='150'>`)
-			.on("click", function() {
-				let overlay = document.getElementById("overlay");
-				if (overlay) {
-					overlay.src = img; // Cambia la imagen en la pantalla de cámara
-				} else {
-					console.error("Elemento #overlay no encontrado.");
-				}
-		// Reproducir sonido al hacer clic en el marcador
-			clickSound.currentTime = 0; // Reinicia el sonido si ya estaba reproduciéndose
-			clickSound.play().catch(error => console.error("Error al reproducir el sonido:", error));
-			});
+				.bindPopup(`<b>${title}</b><br><img src='${img}' width='150'>`)
+				.on("click", function() {
+					let overlay = document.getElementById("overlay");
+					if (overlay) {
+						changeOverlayImage(img); // Usar la nueva función corregida
+					}
+					clickSound.currentTime = 0;
+					clickSound.play().catch(error => console.error("Error al reproducir el sonido:", error));
+				});
 		});
 		
 		function openPopup(title, imgSrc, description) {
@@ -1011,6 +1047,43 @@
 			});
 		});
 		
+		function changeOverlayImage(imageSrc) {
+			overlay.style.opacity = "0"; // Ocultar imagen actual suavemente
+
+			setTimeout(() => {
+				overlay.src = imageSrc; // Cambia la imagen
+				overlay.style.opacity = "0.5"; // Restablece la opacidad
+			}, 500);
+		};
+		
+		let currentCamera = "environment"; // "environment" (trasera) o "user" (frontal)
+		let videoElement = document.getElementById("camera");
+
+		function startCamera(cameraFacing) {
+			if (videoElement.srcObject) {
+				let tracks = videoElement.srcObject.getTracks();
+				tracks.forEach(track => track.stop());
+			}
+
+			navigator.mediaDevices.getUserMedia({
+				video: { facingMode: cameraFacing }
+			})
+			.then(stream => {
+				videoElement.srcObject = stream;
+			})
+			.catch(err => console.error("Error al acceder a la cámara:", err));
+		}
+
+		document.getElementById("toggleCamera").addEventListener("click", function() {
+			currentCamera = (currentCamera === "environment") ? "user" : "environment";
+			startCamera(currentCamera);
+		});
+
+		// Iniciar la cámara con la trasera por defecto
+		window.addEventListener("load", function() {
+			startCamera(currentCamera);
+		});
+	
     </script>
 </body>
 </html>
