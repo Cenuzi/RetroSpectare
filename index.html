@@ -16,7 +16,8 @@
         body { 
             text-align: center; 
             font-family: 'Arial', 'Noto Sans Symbols', sans-serif; 
-            background-color: #f4f4f4; 
+            background: url("MGS/CNI.jpg") no-repeat center center fixed;
+			background-size: cover;
             color: #333; 
             margin: 0; 
             padding: 0;
@@ -112,17 +113,28 @@
 			pointer-events: none;
 		}
 		
-        .banner {
-            background: linear-gradient(90deg, #4CAF50, #2196F3);
-            color: white;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-            margin: 0;
-        }
+		.banner {
+			background: linear-gradient(90deg, #4CAF50, #2196F3);
+			color: white;
+			padding: 20px;
+			text-align: center;
+		}
+
+		.banner .title {
+			font-size: 24px;
+			font-weight: bold;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+		}
+
+		.banner .claim {
+			font-size: 16px;
+			font-weight: normal;
+			text-transform: none;
+			font-style: italic;
+			margin-top: 5px;
+		}
+
         .container { 
             position: relative; 
             width: 300px; 
@@ -142,7 +154,16 @@
             width: 300px;
             margin-top: 15px;
             margin-bottom: 40px;
+			background: rgba(255, 255, 255, 0.85);
+			border-radius: 12px;
+			padding: 15px;
         }
+		
+		.controls-container label {
+			color: #000;
+			font-weight: bold;
+			text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
+		}
 		
 		video {
 			width: 95%;  /* Ajusta el ancho dejando un pequeño margen */
@@ -245,28 +266,59 @@
 		#openMuseumMap {
 			top: 80px; /* Ubica el segundo botón debajo del primero */
 			transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-		}				
-        .footer {
-            background-color: #333;
-            color: white;
-            padding: 15px;
-            font-size: 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            position: relative;
-            margin-top: auto;
-        }
-        .footer img {
-            height: 60px;
-            width: auto;
-            margin-right: 15px;
-        }
-        .footer-text {
-            flex-grow: 1;
-            text-align: center;
-        }
+		}	
+		
+		.footer {
+			background-color: #333;
+			color: white;
+			padding: 20px;
+			font-size: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between; /* 👈 Distribuye los logos en los extremos */
+			flex-wrap: wrap;
+			position: relative;
+		}
+
+		.footer-left-logo,
+		.footer-right-logo {
+			height: 55px;
+			width: auto;
+		}
+
+		.footer-text {
+			text-align: center;
+			flex: 1;
+			padding: 0 20px; /* 👈 Da espacio entre los logos */
+		}
+
+		.footer-quote {
+			font-style: italic;
+			opacity: 0.7;
+			font-size: 13px;
+			margin-top: 8px;
+			text-align: center;
+			width: 100%;
+		}
+
+		.footer-links {
+			margin-top: 10px;
+			display: flex;
+			gap: 15px;
+			justify-content: center;
+			font-size: 13px;
+		}
+
+		.footer-links a {
+			color: white;
+			text-decoration: none;
+			opacity: 0.8;
+		}
+
+		.footer-links a:hover {
+			color: #4CAF50;
+		}
+		
         .map-container {
             position: fixed;
             top: 0;
@@ -401,7 +453,7 @@
 		}
 		
 		#openInfoButton {
-			top: 140px; /* Ubicarlo debajo del botón del mapa del museo */
+			top: 200px; /* Ubicarlo debajo del botón del mapa del museo */
 			position: absolute;
 			right: -70px; /* Mantiene la posición fuera del borde derecho */
 			width: 45px;
@@ -476,7 +528,7 @@
 		#captureButton {
 			position: absolute;
 			right: -70px; /* Mantiene la alineación con los otros botones flotantes */
-			top: 200px; /* Ubicarlo debajo del botón de fichas de información */
+			top: 260px; /* Ubicarlo debajo del botón de fichas de información */
 			width: 45px;
 			height: 50px;
 			background: white;
@@ -527,7 +579,7 @@
 		.routes-toggle {
 			position: absolute;
 			right: -70px; /* Ubicación junto a otros botones flotantes */
-			top: 260px; /* Ajusta la posición debajo de otros botones */
+			top: 140px; /* Ajusta la posición debajo de otros botones */
 			width: 45px;
 			height: 50px;
 			background: white;
@@ -628,7 +680,97 @@
 		.next-image-button:hover {
 			background: #1976D2;
 		}
-	
+		
+		#overlayPlaceholder {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: #888;
+			text-align: center;
+			font-size: 16px;
+			z-index: 2;
+			pointer-events: none;
+			opacity: 0.6;
+		}
+
+		#overlayPlaceholder i {
+			font-size: 40px;
+			margin-bottom: 10px;
+		}
+		
+		@media (max-width: 600px) {
+		  .container {
+			width: 90vw;
+			height: auto;
+			aspect-ratio: 3 / 4;
+			padding: 10px;
+			box-sizing: border-box;
+		  }
+
+		  .controls-container {
+			width: 90vw;
+			padding: 12px;
+			box-sizing: border-box;
+		  }
+
+		  video,
+		  #overlay {
+			width: 100%;
+			height: 100%;
+		  }
+
+		  .banner .title {
+			font-size: 18px;
+		  }
+
+		  .banner .claim {
+			font-size: 14px;
+		  }
+
+		  .footer-text {
+			font-size: 12px;
+		  }
+
+		  /* Reposicionar botones flotantes en pantalla visible */
+		  .map-toggle,
+		  .settings-toggle,
+		  .routes-toggle {
+			position: fixed !important;
+			right: 10px !important;
+			left: auto !important;
+			top: unset !important;
+			width: 45px;
+			height: 45px;
+			z-index: 1002;
+		  }
+
+		  #mapButton { bottom: 60px; }
+		  #openMuseumMap { bottom: 120px; }
+		  #openInfoButton { bottom: 180px; }
+		  #captureButton { bottom: 240px; }
+		  #routesButton { bottom: 300px; }
+		  #openProfileButton { bottom: 360px; }
+
+		  #settingsButton {
+			bottom: 420px;
+			left: 10px !important;
+			right: auto !important;
+		  }
+
+		  #resetOverlay {
+			bottom: 480px;
+			left: 10px !important;
+			right: auto !important;
+		  }
+
+		  #toggleCamera {
+			bottom: 540px;
+			left: 10px !important;
+			right: auto !important;
+		  }
+		}
+
     </style>
 </head>
 <body>
@@ -642,34 +784,42 @@
 		<!-- Segunda fase: Logos de patrocinadores -->
 		<div class="splash-phase hidden" id="phase2">
 			<h2 class="splash-title">Con el apoyo de:</h2>
-			<img src="MGS/logos .png" alt="Patrocinadores" class="splash-logos">
+			<img src="MGS/logos.png" alt="Patrocinadores" class="splash-logos">
 		</div>
 	</div>
 
-    <div class="banner">RetroSpectare</div>
+	<div class="banner">
+		<div class="title">RetroSpectare</div>
+		<div class="claim">Una mirada al pasado</div>
+	</div>
 	
     <div class="content">
         <div class="container">
             <video id="camera" autoplay></video>
-            <img id="overlay" src="" alt="Imagen superpuesta">
+            <img id="overlay" src="" alt="">
+			
+			<div id="overlayPlaceholder">
+				<i class="fas fa-image"></i>
+				<p>Sin imagen seleccionada</p>
+			</div>
 			
 			<!-- Botón del mapa exterior -->
-            <button class="map-toggle" id="mapButton" onclick="toggleMap()">
+            <button class="map-toggle" id="mapButton" onclick="toggleMap()" title="Mostrar/Ocultar el mapa exterior">
                 <i class="fas fa-map-marker-alt"></i>
             </button>
 			
 			<!-- Botón del mapa del museo -->
-			<button class="map-toggle" id="openMuseumMap">
+			<button class="map-toggle" id="openMuseumMap" title="Mostrar/Ocultar el mapa del museo">
 				<i class="fas fa-map"></i>
 			</button>
 			
 			<!-- Botón para abrir la ficha de información -->
-			<button class="map-toggle" id="openInfoButton">
+			<button class="map-toggle" id="openInfoButton" title="Ver información histórica de la imagen" style="top: 260px;">
 				<i class="fas fa-info-circle"></i>
 			</button>
 			
 			<!-- Botón de configuración -->
-			<button id="settingsButton" class="settings-toggle">
+			<button id="settingsButton" class="settings-toggle" title="Activar/Desactivar cámara y ubicación">
 				<i class="fas fa-cog"></i>
 			</button>
 			
@@ -680,23 +830,28 @@
 			</div>
 			
 			<!-- Botón de reset -->
-			<button id="resetOverlay" class="settings-toggle">
+			<button id="resetOverlay" class="settings-toggle" title="Quitar imagen superpuesta y reiniciar opacidad">
 				<i class="fas fa-undo"></i>
 			</button>
 			
 			<!-- Botón de capturar comparación -->
-			<button id="captureButton" class="map-toggle">
+			<button id="captureButton" class="map-toggle" title="Capturar imagen actual con superposición" style="top: 320px">
 				<i class="fas fa-camera"></i>
 			</button>
 			
 			<!-- Botón para alternar entre cámaras -->
-			<button id="toggleCamera" class="settings-toggle">
+			<button id="toggleCamera" class="settings-toggle" title="Cambiar entre cámara frontal y trasera">
 				<i class="fas fa-sync-alt"></i>
 			</button>
 			
 			<!-- Botón de rutas -->
-			<button id="routesButton" class="routes-toggle">
+			<button id="routesButton" class="routes-toggle" title="Explorar rutas disponibles">
 				<i class="fas fa-route"></i>
+			</button>
+			
+			<!-- Botón para abrir la ficha de usuario -->
+			<button id="openProfileButton" class="map-toggle" title="Ver mi progreso" style="top: 200px;">
+				<i class="fas fa-user"></i>
 			</button>
 
         </div>
@@ -734,10 +889,40 @@
 		<div id="routesList"></div>
 	</div>
 
-    <div class="footer">
-		<img src="MGS/MC.png" alt="Museo Canario Logo">
-        <div class="footer-text">© 2024 RetroSpectare. Todos los derechos reservados.</div>
-    </div>
+	<div class="footer">
+	
+		<img class="footer-left-logo" src="MGS/MC.png" alt="Logo de El Museo Canario">
+		
+		<div class="footer-text">
+			© <span id="year"></span> RetroSpectare
+			<div class="footer-quote">Una mirada al pasado</div>
+			<div class="footer-links">
+				<a href="#">Créditos</a>
+				<a href="#">Contacto</a>
+			</div>
+		</div>
+
+		<img class="footer-right-logo" src="MGS/GDC.svg.png" alt="Logo del Gobierno de Canarias">
+		
+	</div>
+	
+	<!-- Ficha de usuario -->
+	
+	<div id="userProfile" class="routes-menu" style="right: -390px;">
+		<button id="closeProfileButton" class="close-menu-button">&times;</button>
+		<h2>👤 Mi progreso</h2>
+		<p><strong>Lugares visitados:</strong> <span id="profileVisitCount">0</span></p>
+		
+		<p><strong>Nivel:</strong> <span id="userLevel">1</span></p>
+		<div style="background:#ddd; border-radius:10px; overflow:hidden; height:20px;">
+			<div id="xpBar" style="height:100%; width:0%; background:#4CAF50;"></div>
+		</div>
+		<p><small><span id="currentXP">0</span> / <span id="xpToNext">100</span> XP</small></p>
+
+		<h3>🏅 Insignias</h3>
+		<div id="badgeContainer" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+	</div>
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
 	
@@ -786,8 +971,8 @@
 			"MGS/C13.jpg", "MGS/C14.jpg", "MGS/C15.jpg",
 			"MGS/M01.jpg", "MGS/M02.jpg", "MGS/M03.jpg",
 			"MGS/M04.jpg", "MGS/M05.jpg", "MGS/M06.jpg",
-			"MGS/M07.jpg", "MGS/M08.jpg", "MGS/M09.jpg",
-			"MGS/M10.jpg"
+			"MGS/M07.jpg", "MGS/M10.jpg", "MGS/M11.jpg",
+			"MGS/M12.jpg", "MGS/M14.jpg"
         ];
 		
 		imageSelect.innerHTML = `<option value="" selected disabled>Selecciona una imagen</option>` + 
@@ -799,7 +984,7 @@
 				overlay.style.left = "60%"; // Mueve la imagen ligeramente a la derecha
 
 				setTimeout(() => {
-					overlay.src = event.target.value;
+					updateOverlay(event.target.value);
 					overlay.style.left = "50%"; // Vuelve a la posición original centrada
 					overlay.style.opacity = "0.5";
 				}, 500);
@@ -846,7 +1031,7 @@
 					.bindPopup(`<img src="${image}" width="100px"><br>${image.split("/").pop()}`)
 					.on("click", () => {
 						document.getElementById("imageSelect").value = image;
-						document.getElementById("overlay").src = image;
+						updateOverlay(image);
 					});
 			});
 		}
@@ -855,7 +1040,7 @@
 		
 		imageSelect.addEventListener("change", event => {
 			const selectedImage = event.target.value;
-			overlay.src = selectedImage;
+			updateOverlay(selectedImage);
     
 		if (imageLocations[selectedImage]) {
 			const { lat, lng } = imageLocations[selectedImage];
@@ -915,15 +1100,16 @@
 
 		// Marcadores del museo
 		const museumMarkers = [
-			{ coords: [411.75, 630], title: "Poblados", img: "MGS/M02.jpg" },
-			{ coords: [869, 587.25], title: "Industria Lítica", img: "MGS/M03.jpg" },
-			{ coords: [784.5, 466.5], title: "Producción de alimentos", img: "MGS/M04.jpg" },
-			{ coords: [472.25, 634.25], title: "Producción simbólica", img: "MGS/M05.jpg" },
+			{ coords: [411.75, 630], title: "Tienda", img: "MGS/M02.jpg" },
+			{ coords: [869, 587.25], title: "Cerámica aborigen de Gran Canaria", img: "MGS/M03.jpg" },
+			{ coords: [784.5, 466.5], title: "Manufacturas en pieles y fibras vegetales", img: "MGS/M04.jpg" },
+			{ coords: [472.25, 634.25], title: "Poblados", img: "MGS/M05.jpg" },
 			{ coords: [780.5, 706.75], title: "Bioantropología", img: "MGS/M06.jpg" },
-			{ coords: [495.5, 571], title: "Espacios Funerarios", img: "MGS/M10.jpg" },
-			{ coords: [831.75, 707.5], title: "Espacios Funerarios", img: "MGS/M11.jpg" },
+			{ coords: [845.5, 342], title: "Exposiciones temporales", img: "MGS/M07.jpg" },
+			{ coords: [495.5, 571], title: "Poblados", img: "MGS/M10.jpg" },
+			{ coords: [831.75, 707.5], title: "Tecnología cerámica", img: "MGS/M11.jpg" },
 			{ coords: [768.5, 631.5], title: "Espacios Funerarios", img: "MGS/M12.jpg" },
-			{ coords: [702, 378], title: "Espacios Funerarios", img: "MGS/M14.jpg" }
+			{ coords: [702, 378], title: "Salón de actos", img: "MGS/M14.jpg" }
 		];
 		
 		museumMarkers.forEach(({ coords, title, img }) => {
@@ -932,6 +1118,7 @@
 				.on("click", function() {
 					let overlay = document.getElementById("overlay");
 					if (overlay) {
+						imageSelect.value = img;
 						changeOverlayImage(img); // Usar la nueva función corregida
 					}
 					clickSound.currentTime = 0;
@@ -1030,8 +1217,8 @@
 			"MGS/M06.jpg": {title: "Sala de 'La antropología física' (Sala 7), El Museo Canario",
 			description: "Vista parcial de la sala identificada como 'La antropología física' de El Museo Canario, dedicada al doctor René Verneau. Destacan los cráneos y demás restos óseos humanos en sus vitrinas, los bustos de diferentes razas sobre las mismas y los restos momificados alojados en las vitrinas centrales."
 			},
-			"MGS/M07.jpg": {title: "",
-			description: ""
+			"MGS/M07.jpg": {title: "El Museo Canario, sala de Historia Natural",
+			description: "Vista parcial de la antigua sala dedicada a la colección de vertebrados. La sala se halla rodeada de vitrinas donde, como se observa, se alojan los animales disecados y sobre las mismas se encuentra una colección de cráneos. Del techo cuelga un ave con las alas extendidas."
 			},
 			"MGS/M08.jpg": {title: "",
 			description: ""
@@ -1080,6 +1267,7 @@
 		});
 		
 		// Función para obtener la ubicación del usuario
+		
 		let locationWatcherStarted = false;
 		function watchUserLocation() {
 			if (!locationWatcherStarted) {
@@ -1106,6 +1294,7 @@
 		}
 
 		// Función para calcular la distancia entre dos coordenadas en metros
+		
 		function calculateDistance(lat1, lng1, lat2, lng2) {
 			const R = 6371e3; // Radio de la Tierra en metros
 			const φ1 = lat1 * (Math.PI / 180);
@@ -1130,8 +1319,8 @@
 			if (!imageSelect || !overlay) {
 				console.error("Elementos no encontrados: imageSelect o overlay.");
 				return;
-		}
-			
+			}
+
 			const proximityRadius = 20; // Radio en metros para activar la imagen
 
 			Object.keys(imageLocations).forEach(image => {
@@ -1139,17 +1328,20 @@
 				const distance = calculateDistance(userLat, userLng, lat, lng);
 
 				if (distance <= proximityRadius) {
-				    if (overlay.src !== image) { // Solo notificar si la imagen cambia
-					alert(`¡Nueva imagen detectada cerca! Se ha seleccionado: ${image.split("/").pop()}`);
-                
-					if ("vibrate" in navigator) {
-                    navigator.vibrate(200); // Vibración de 200 ms en móviles
-                }
-            }
+					if (!visitedImages.includes(image)) {
+						visitedImages.push(image);
+						visitCount = visitedImages.length;
+						localStorage.setItem("visitedImages", JSON.stringify(visitedImages));
+						addXP(20);
+						alert(`📍 Has descubierto un nuevo lugar: ${image.split("/").pop()} (${visitCount} en total)`);
+					}
 
-					// Seleccionar automáticamente la imagen en el dropdown
-					imageSelect.value = image;
-					overlay.src = image;
+					if (!overlay.src.includes(image)) {
+						imageSelect.value = image;
+						updateOverlay(image);
+
+						if ("vibrate" in navigator) navigator.vibrate(200);
+					}
 				}
 			});
 		}
@@ -1203,15 +1395,15 @@
 		});
 		
 		document.addEventListener("DOMContentLoaded", function() {
-			document.getElementById("resetOverlay").addEventListener("click", function() {
-				document.getElementById("overlay").src = "";
-				document.getElementById("opacity").value = 0.5;
-				document.getElementById("overlay").style.opacity = 0.5;
-				document.getElementById("imageSelect").value = "";
+		document.getElementById("resetOverlay").addEventListener("click", function() {
+			updateOverlay(""); // limpia la imagen y muestra el placeholder
+			document.getElementById("opacity").value = 0.5;
+			overlay.style.opacity = 0.5;
+			imageSelect.value = "";
 			});
 		});
 		
-		<!-- Función sobre la captura de comparación -->
+		// Función sobre la captura de comparación
 		
 		document.addEventListener("DOMContentLoaded", function () {
 			document.getElementById("captureButton").addEventListener("click", function () {
@@ -1239,7 +1431,7 @@
 			overlay.style.opacity = "0"; // Ocultar imagen actual suavemente
 
 			setTimeout(() => {
-				overlay.src = imageSrc; // Cambia la imagen
+				updateOverlay(imageSrc);
 				overlay.style.opacity = "0.5"; // Restablece la opacidad
 			}, 500);
 		};
@@ -1399,7 +1591,99 @@
 				routesMenu.style.right = "-390px"; // Ocultar menú
 			});
 		});
-	
+		
+		document.getElementById("year").textContent = new Date().getFullYear();
+		
+		// Ficha del usuario
+		
+		let visitedImages = JSON.parse(localStorage.getItem("visitedImages") || "[]");
+		let visitCount = visitedImages.length;
+
+		let userXP = parseInt(localStorage.getItem("userXP") || "0");
+		let userLevel = parseInt(localStorage.getItem("userLevel") || "1");
+
+		function updateProfileUI() {
+			document.getElementById("profileVisitCount").textContent = visitCount;
+			document.getElementById("userLevel").textContent = userLevel;
+			document.getElementById("currentXP").textContent = userXP;
+			const xpToNext = userLevel * 100;
+			document.getElementById("xpToNext").textContent = xpToNext;
+			document.getElementById("xpBar").style.width = `${(userXP / xpToNext) * 100}%`;
+		}
+
+		function addXP(amount) {
+			userXP += amount;
+			const xpToNext = userLevel * 100;
+			if (userXP >= xpToNext) {
+				userXP -= xpToNext;
+				userLevel++;
+				alert(`🎉 ¡Subiste a nivel ${userLevel}!`);
+			}
+			localStorage.setItem("userXP", userXP);
+			localStorage.setItem("userLevel", userLevel);
+			updateProfileUI();
+		}
+		
+		// Sistema de insignias
+		
+		function checkBadges() {
+		const badgeContainer = document.getElementById("badgeContainer");
+		badgeContainer.innerHTML = "";
+
+		const badges = [
+			{ id: "badge1", name: "Explorador Novato", condition: visitCount >= 5, emoji: "🥉" },
+			{ id: "badge2", name: "Aventurero Local", condition: visitCount >= 10, emoji: "🥈" },
+			{ id: "badge3", name: "Maestro del Pasado", condition: visitCount >= 20, emoji: "🏆" },
+			{ id: "badge4", name: "Rutero", condition: userLevel >= 2, emoji: "🗺️" },
+		];
+
+		badges.forEach(b => {
+			const unlocked = b.condition;
+			const badge = document.createElement("div");
+			badge.textContent = unlocked ? `${b.emoji} ${b.name}` : "🔒 ???";
+			badge.style.background = unlocked ? "#e3f2fd" : "#eee";
+			badge.style.padding = "6px 10px";
+			badge.style.borderRadius = "6px";
+			badge.style.fontSize = "14px";
+			badgeContainer.appendChild(badge);
+		});
+	}
+		// Botón para abrir/cerra el perfil
+		
+		document.addEventListener("DOMContentLoaded", () => {
+			const openBtn = document.getElementById("openProfileButton");
+			const closeBtn = document.getElementById("closeProfileButton");
+			const panel = document.getElementById("userProfile");
+
+			openBtn.addEventListener("click", () => {
+				panel.style.right = panel.style.right === "0px" ? "-390px" : "0px";
+				updateProfileUI();
+				checkBadges();
+			});
+
+			closeBtn.addEventListener("click", () => {
+				panel.style.right = "-390px";
+			});
+
+			updateProfileUI();
+			checkBadges();
+		});
+		
+		const placeholder = document.getElementById("overlayPlaceholder");
+
+		function updateOverlay(src) {
+			overlay.src = src;
+
+			// Comprobar si la ruta está vacía para mostrar el placeholder
+			setTimeout(() => {
+				if (!src || src.trim() === "") {
+					placeholder.style.display = "block";
+				} else {
+					placeholder.style.display = "none";
+				}
+			}, 50);
+		}		
+
     </script>
 </body>
 </html>
