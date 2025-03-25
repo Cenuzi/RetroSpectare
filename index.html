@@ -769,11 +769,96 @@
 			left: 10px !important;
 			right: auto !important;
 		  }
+		  
+		#fullscreenButton {
+			position: fixed;
+			left: 10px;
+			bottom: 600px; /* justo encima del botón de cámara */
+			width: 45px;
+			height: 45px;
+			background: white;
+			border: 2px solid #2196F3;
+			border-radius: 50%;
+			font-size: 20px;
+			color: #2196F3;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 3000;
+			box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+		  }
+		  
+		  body.fullscreen-active .container {
+			  width: 100vw !important;
+			  height: 100vh !important;
+			  max-width: 100vw;
+			  max-height: 100vh;
+			  margin: 0;
+			  padding: 0;
+			  border: none;
+			  box-shadow: none;
+			  border-radius: 0;
+			}
+		  
+		  #fullscreenButton:hover {
+			background: #2196F3;
+			color: white;
+		  }	  
+		}
+		
+		#fullscreenButton {
+		  position: absolute;
+		  left: -70px;
+		  top: 45%;
+		  transform: translateY(-50%);
+		  width: 50px;
+		  height: 50px;
+		  background: white;
+		  border: 2px solid #2196F3;
+		  border-radius: 50%;
+		  font-size: 24px;
+		  color: #2196F3;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  cursor: pointer;
+		  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+		  transition: all 0.3s ease-in-out;
+		  z-index: 1001;
+		}
+
+		/* Estilo cuando estamos en pantalla completa */
+		body.fullscreen-active #fullscreenButton {
+		  position: fixed;
+		  left: auto;
+		  right: 15px;
+		  bottom: 15px;
+		  top: auto;
+		  transform: none;
+		  z-index: 3000;
+		}
+
+		#fullscreenButton:hover {
+		  background: #2196F3;
+		  color: white;
+		}
+		
+		.intro-active #mapButton,
+		.intro-active #openMuseumMap,
+		.intro-active #openInfoButton,
+		.intro-active #captureButton,
+		.intro-active #routesButton,
+		.intro-active #openProfileButton,
+		.intro-active #settingsButton,
+		.intro-active #resetOverlay,
+		.intro-active #toggleCamera,
+		.intro-active #fullscreenButton {
+			display: none !important;
 		}
 
     </style>
 </head>
-<body>
+<body class="intro-active">
     
 	<div class="splash-screen" id="splash">
 		<!-- Primera fase: Logo de RetroSpectare -->
@@ -852,6 +937,11 @@
 			<!-- Botón para abrir la ficha de usuario -->
 			<button id="openProfileButton" class="map-toggle" title="Ver mi progreso" style="top: 200px;">
 				<i class="fas fa-user"></i>
+			</button>
+			
+			<!-- Botón para pantalla completa -->
+			<button id="fullscreenButton" style="display: none;" class="fullscreen-toggle" title="Pantalla completa">
+				<i class="fas fa-expand"></i>
 			</button>
 
         </div>
@@ -938,6 +1028,8 @@
 					setTimeout(() => {
 						// Oculta toda la pantalla de inicio
 						document.getElementById("splash").classList.add("hidden");
+						document.body.classList.remove("intro-active");
+						document.getElementById("fullscreenButton").style.display = "flex";
 					}, 3000); // Tiempo que los logos de patrocinadores estarán visibles
 
 				}, 500); // Pequeña pausa entre fases
@@ -1684,6 +1776,54 @@
 			}, 50);
 		}		
 
+		const fullscreenButton = document.getElementById("fullscreenButton");
+		const icon = fullscreenButton.querySelector("i");
+		const container = document.querySelector(".container");
+		
+		function enterFullscreen() {
+		const elem = document.querySelector(".container");
+
+		  if (elem.requestFullscreen) {
+			return elem.requestFullscreen();
+		  } else if (elem.webkitRequestFullscreen) {
+			return elem.webkitRequestFullscreen(); // Safari
+		  } else if (elem.msRequestFullscreen) {
+			return elem.msRequestFullscreen(); // IE/Edge
+		  } else {
+			return Promise.reject("Fullscreen no soportado");
+		  }
+		}
+
+		function exitFullscreen() {
+		  if (document.exitFullscreen) {
+			return document.exitFullscreen();
+		  } else if (document.webkitExitFullscreen) {
+			return document.webkitExitFullscreen();
+		  } else if (document.msExitFullscreen) {
+			return document.msExitFullscreen();
+		  } else {
+			return Promise.reject("Salir de fullscreen no soportado");
+		  }
+		}
+
+
+		fullscreenButton.addEventListener("click", () => {
+		  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+			enterFullscreen().then(() => {
+			  document.body.classList.add("fullscreen-active");
+			  icon.classList.replace("fa-expand", "fa-compress");
+			}).catch(err => {
+			  console.warn("Error al entrar en pantalla completa:", err);
+			});
+		  } else {
+			exitFullscreen().then(() => {
+			  document.body.classList.remove("fullscreen-active");
+			  icon.classList.replace("fa-compress", "fa-expand");
+			});
+		  }
+		});
+
+		
     </script>
 </body>
 </html>
